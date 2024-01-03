@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
         libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386 \
         libxrender1 libxtst6 libxi6 libfreetype6 libxft2 xz-utils vim\
         qemu qemu-kvm libvirt-bin ubuntu-vm-builder bridge-utils libnotify4 libglu1 libqt5widgets5 openjdk-8-jdk openjdk-11-jdk xvfb \
+        firefox cpu-checker \
         && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -23,6 +24,7 @@ RUN echo "$USER:$USER" | chpasswd
 RUN echo "${USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-$USER
 RUN usermod -aG sudo $USER
 RUN usermod -aG plugdev $USER
+RUN usermod -aG kvm $USER
 RUN mkdir -p /androidstudio-data
 VOLUME /androidstudio-data
 RUN chown $USER:$USER /androidstudio-data
@@ -47,17 +49,25 @@ WORKDIR /home/$USER
 ARG FLUTTER_URL=https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.13.6-stable.tar.xz
 ARG FLUTTER_VERSION=3.13.6
 
-RUN wget "$FLUTTER_URL" -O flutter.tar.xz
+RUN wget "$FLUTTER_URL" --progress=dot:giga -O flutter.tar.xz
 RUN tar -xvf flutter.tar.xz
 RUN rm flutter.tar.xz
 
-#Android Studio
-ARG ANDROID_STUDIO_URL=https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2022.3.1.20/android-studio-2022.3.1.20-linux.tar.gz
-ARG ANDROID_STUDIO_VERSION=2022.3.1.20
+#ADD --chown=$USER:$USER download/flutter.tar.xz /home/$USER/
 
-RUN wget "$ANDROID_STUDIO_URL" -O android-studio.tar.gz
+
+#Android Studio
+#ARG ANDROID_STUDIO_URL=https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2022.3.1.20/android-studio-2022.3.1.20-linux.tar.gz
+#ARG ANDROID_STUDIO_VERSION=2022.3.1.20
+
+ARG ANDROID_STUDIO_URL=https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2023.1.1.26/android-studio-2023.1.1.26-linux.tar.gz
+ARG ANDROID_STUDIO_VERSION=2023.1.1.26
+
+RUN wget "$ANDROID_STUDIO_URL"  --progress=dot:giga -O android-studio.tar.gz
 RUN tar xzvf android-studio.tar.gz
 RUN rm android-studio.tar.gz
+
+#ADD --chown=$USER:$USER download/android-studio.tar.gz /home/$USER/
 
 RUN ln -s /studio-data/profile/AndroidStudio$ANDROID_STUDIO_VERSION .AndroidStudio$ANDROID_STUDIO_VERSION
 RUN ln -s /studio-data/Android Android
