@@ -53,21 +53,13 @@ RUN wget "$FLUTTER_URL" --progress=dot:giga -O flutter.tar.xz
 RUN tar -xvf flutter.tar.xz
 RUN rm flutter.tar.xz
 
-#ADD --chown=$USER:$USER download/flutter.tar.xz /home/$USER/
-
-
 #Android Studio
-#ARG ANDROID_STUDIO_URL=https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2022.3.1.20/android-studio-2022.3.1.20-linux.tar.gz
-#ARG ANDROID_STUDIO_VERSION=2022.3.1.20
-
 ARG ANDROID_STUDIO_URL=https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2023.1.1.26/android-studio-2023.1.1.26-linux.tar.gz
 ARG ANDROID_STUDIO_VERSION=2023.1.1.26
 
 RUN wget "$ANDROID_STUDIO_URL"  --progress=dot:giga -O android-studio.tar.gz
 RUN tar xzvf android-studio.tar.gz
 RUN rm android-studio.tar.gz
-
-#ADD --chown=$USER:$USER download/android-studio.tar.gz /home/$USER/
 
 RUN ln -s /studio-data/profile/AndroidStudio$ANDROID_STUDIO_VERSION .AndroidStudio$ANDROID_STUDIO_VERSION
 RUN ln -s /studio-data/Android Android
