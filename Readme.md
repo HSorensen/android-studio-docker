@@ -46,6 +46,10 @@ Running and Building with docker compose:
 2. To build: `docker compose build android_emulator`
 3. To run: `docker compose run android_emulator`
 
+Troubleshooting
+------------
+- Permissions related to connection to Display, run on host: xhost local:android
+- Permissions related to /dev/kvm, run on host: sudo chmod 666 /dev/kvm
 
 
 Additional information - continous integration
