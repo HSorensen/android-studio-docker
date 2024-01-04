@@ -22,5 +22,19 @@ mkdir -p studio-data/profile/AndroidStudio2022.3.1.20
 mkdir -p studio-data/profile/android
 mkdir -p studio-data/profile/gradle
 mkdir -p studio-data/profile/java
-docker volume create --name=android_studio
-docker run -i $AOSP_ARGS -v `pwd`/studio-data:/studio-data -v android_studio:/androidstudio-data --privileged --group-add plugdev deadolus/android-studio $@
+mkdir -p studio-data/Android
+
+VOLOK=`docker volume ls | grep -w android_studio`
+
+if [ "$VOLOK" = "" ]; then
+docker volume create android_studio
+fi
+
+# check xhost
+XHOST=`xhost | grep LOCAL:`
+if [ -z $XHOST ]; then
+#xhost: non-network local connections being added to access control list
+xhost local:android
+fi
+
+docker run --rm -i $AOSP_ARGS -v `pwd`/studio-data:/studio-data -v android_studio:/androidstudio-data -v `pwd`/workdir:/workdir --device=/dev/kvm --name android_studio --privileged --group-add kvm --group-add plugdev deadolus/android-studio $@
